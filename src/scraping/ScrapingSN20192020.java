@@ -31,6 +31,8 @@ public class ScrapingSN20192020 {
 		// TODO Auto-generated method stub
 
 		String url = "https://coinmarketcap.com/";
+		
+		String file = "ejemplo.htm";
 
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -40,8 +42,12 @@ public class ScrapingSN20192020 {
 		org.w3c.dom.Element rootElement = doc.createElement("monedas");
 		doc.appendChild(rootElement);
 
-		if (getStatusConnectionCode(url) == 200) {
-			Document documento = getHtmlDocument(url);
+//		if (getStatusConnectionCode(url) == 200) {
+			if (getStatusFile(file) == 1) {
+			
+//			Document documento = getHtmlDocument(url);
+			Document documento = getHtmlFileToDocument(file);
+			
 			Elements elementos = documento.select("#currencies tr:has(td.text-center)");
 			System.out.println(elementos.size());
 			for (Element elem : elementos) {
@@ -132,6 +138,22 @@ public class ScrapingSN20192020 {
 		Document doc = null;
 		try {
 			doc = Jsoup.connect(url).userAgent("Mozilla/5.0").timeout(100000).get();
+		} catch (IOException ex) {
+			System.out.println("Excepción al obtener el HTML de la página" + ex.getMessage());
+		}
+		return doc;
+	}
+	
+	public static int getStatusFile(String file) {
+		return 1;
+	}
+	
+	public static Document getHtmlFileToDocument(String file) {
+
+		File input = new File("data/"+file);
+		Document doc = null;
+		try {
+			doc = Jsoup.parse(input, "UTF-8", "http://example.com/");
 		} catch (IOException ex) {
 			System.out.println("Excepción al obtener el HTML de la página" + ex.getMessage());
 		}
