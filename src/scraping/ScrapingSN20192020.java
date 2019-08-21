@@ -32,14 +32,14 @@ public class ScrapingSN20192020 {
 
 		String url = "https://coinmarketcap.com/";
 		
-		String file = "ejemplo.htm";
+		String file = "ejemplo.html";
 
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
 		// elemento raiz
 		org.w3c.dom.Document doc = docBuilder.newDocument();
-		org.w3c.dom.Element rootElement = doc.createElement("monedas");
+		org.w3c.dom.Element rootElement = doc.createElement("game");
 		doc.appendChild(rootElement);
 
 //		if (getStatusConnectionCode(url) == 200) {
@@ -47,33 +47,42 @@ public class ScrapingSN20192020 {
 			
 //			Document documento = getHtmlDocument(url);
 			Document documento = getHtmlFileToDocument(file);
-			
-			Elements elementos = documento.select("#currencies tr:has(td.text-center)");
+
+//			Analizando un grupo de bateadores
+			Elements elementos = documento.select("table[id=MainContent_Estado_Juego_Tabs_ctl44_BoxScore_Bateo_VS_DXMainTable] > tbody > tr");
 			System.out.println(elementos.size());
 			for (Element elem : elementos) {
+				
+				org.w3c.dom.Element player = doc.createElement("player");
+				rootElement.appendChild(player);
+				Integer contador = 0; 
+				Elements playerData = elem.select("td");
+				for (Element playerElement : playerData) {
+					contador++;
+					String cadena = playerElement.text();
+					
+					// atributo del player
+					Attr attr = doc.createAttribute("id"+contador);
+					attr.setValue(cadena);
+					player.setAttributeNode(attr);
+					
+				}
+				
 				String titulo = elem.getElementsByClass("text-center").text();
 				String autor = elem.getElementsByClass("currency-name-container").text();
 				//String marketCap = elem.getElementsByClass("market-cap").text();
 				String price = elem.getElementsByClass("price").text();
 				System.out.println(titulo + ":" + autor + ":" + price);
 
-				// moneda
-				org.w3c.dom.Element empleado = doc.createElement("moneda");
-				rootElement.appendChild(empleado);
-				// atributo del elemento empleado
-				Attr attr = doc.createAttribute("id");
-				attr.setValue(titulo);
-				empleado.setAttributeNode(attr);
+//				// moneda
+//				org.w3c.dom.Element empleado = doc.createElement("moneda");
+//				rootElement.appendChild(empleado);
+//				// atributo del elemento empleado
+//				Attr attr = doc.createAttribute("id");
+//				attr.setValue(titulo);
+//				empleado.setAttributeNode(attr);
 
-				// nombre
-				org.w3c.dom.Element nombre = doc.createElement("nombre");
-				nombre.appendChild(doc.createTextNode(autor));
-				empleado.appendChild(nombre);
-
-				// valor
-				org.w3c.dom.Element valor = doc.createElement("valor");
-				valor.appendChild(doc.createTextNode(price));
-				empleado.appendChild(valor);
+				
 			}
 		}
 
