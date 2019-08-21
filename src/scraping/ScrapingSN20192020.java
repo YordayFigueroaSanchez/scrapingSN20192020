@@ -31,7 +31,7 @@ public class ScrapingSN20192020 {
 		// TODO Auto-generated method stub
 
 		String url = "https://coinmarketcap.com/";
-		
+
 		String file = "ejemplo.html";
 
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -43,62 +43,76 @@ public class ScrapingSN20192020 {
 		doc.appendChild(rootElement);
 
 //		if (getStatusConnectionCode(url) == 200) {
-			if (getStatusFile(file) == 1) {
-			
+		if (getStatusFile(file) == 1) {
+
 //			Document documento = getHtmlDocument(url);
 			Document documento = getHtmlFileToDocument(file);
 
 //			Analizando un grupo de bateadores
-			Elements elementos = documento.select("table[id=MainContent_Estado_Juego_Tabs_ctl44_BoxScore_Bateo_VS_DXMainTable] > tbody > tr");
+			Elements elementos = documento
+					.select("table[id=MainContent_Estado_Juego_Tabs_ctl44_BoxScore_Bateo_VS_DXMainTable] > tbody > tr");
 			System.out.println(elementos.size());
 			for (Element elem : elementos) {
-				
-				org.w3c.dom.Element player = doc.createElement("player");
-				rootElement.appendChild(player);
-				Integer contador = 0; 
-				Elements playerData = elem.select("td");
-				for (Element playerElement : playerData) {
-					contador++;
-					String cadena = playerElement.text();
-					
-					// atributo del player
-					Attr attr = doc.createAttribute("id"+contador);
-					attr.setValue(cadena);
-					player.setAttributeNode(attr);
-					
+
+				// para no tomar la primera entrada que tiene el encabezado
+				if (!(elem.equals(elementos.first()))) {
+//					System.out.println("ok");
+
+					org.w3c.dom.Element player = doc.createElement("player");
+					rootElement.appendChild(player);
+					Integer contador = 0;
+					Elements playerData = elem.select("td");
+					for (Element playerElement : playerData) {
+						contador++;
+						String attrName = "";
+						switch(contador) {
+						case 1: attrName = "name";
+						break;
+						case 2: attrName = "vb";
+						break;
+						case 3: attrName = "c";
+						break;
+						case 4: attrName = "h";
+						break;
+						case 5: attrName = "b2";
+						break;
+						case 6: attrName = "b3";
+						break;
+						case 7: attrName = "hr";
+						break;
+						case 8: attrName = "ci";
+						break;
+						case 9: attrName = "o";
+						break;
+						case 10: attrName = "a";
+						break;
+						case 11: attrName = "e";
+						break;
+						}
+						String cadena = playerElement.text();
+
+						// atributo del player
+						Attr attr = doc.createAttribute(attrName);
+						attr.setValue(cadena);
+						player.setAttributeNode(attr);
+					}
 				}
-				
-				String titulo = elem.getElementsByClass("text-center").text();
-				String autor = elem.getElementsByClass("currency-name-container").text();
-				//String marketCap = elem.getElementsByClass("market-cap").text();
-				String price = elem.getElementsByClass("price").text();
-				System.out.println(titulo + ":" + autor + ":" + price);
 
-//				// moneda
-//				org.w3c.dom.Element empleado = doc.createElement("moneda");
-//				rootElement.appendChild(empleado);
-//				// atributo del elemento empleado
-//				Attr attr = doc.createAttribute("id");
-//				attr.setValue(titulo);
-//				empleado.setAttributeNode(attr);
-
-				
 			}
 		}
 
-		
-		//nombre del fichero
-		Date  fecha = new Date();
-		DateFormat hourdateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss"); 
-		System.out.println("Hora y fecha: "+hourdateFormat.format(fecha));
+		// nombre del fichero
+		Date fecha = new Date();
+		DateFormat hourdateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
+		System.out.println("Hora y fecha: " + hourdateFormat.format(fecha));
 		String nombreFichero = hourdateFormat.format(fecha);
-		
+
 		// escribimos el contenido en un archivo .xml
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(doc);
 		String ruta = "dataXML\\";
-		StreamResult result = new StreamResult(new File(ruta,nombreFichero + ".xml"));
+		StreamResult result = new StreamResult(new File(ruta, nombreFichero + ".xml"));
 
 		// StreamResult result = new StreamResult(new File("archivo.xml"));
 		// Si se quiere mostrar por la consola...
@@ -152,14 +166,14 @@ public class ScrapingSN20192020 {
 		}
 		return doc;
 	}
-	
+
 	public static int getStatusFile(String file) {
 		return 1;
 	}
-	
+
 	public static Document getHtmlFileToDocument(String file) {
 
-		File input = new File("data/"+file);
+		File input = new File("data/" + file);
 		Document doc = null;
 		try {
 			doc = Jsoup.parse(input, "UTF-8", "http://example.com/");
