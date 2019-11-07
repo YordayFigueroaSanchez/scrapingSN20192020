@@ -32,7 +32,7 @@ public class ScrapingSN20192020 {
 
 		String url = "https://coinmarketcap.com/";
 
-		String file = "ejemplo.html";
+		String file = "345.html";
 
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -226,7 +226,8 @@ public class ScrapingSN20192020 {
 	}
 
 private static String extractIdLink(String cadena) {
-	String[] cadenaSplit = cadena.split("id=");
+//	String[] cadenaSplit = cadena.split("id=");
+	String[] cadenaSplit = cadena.split("idJugador=");
 	return cadenaSplit[1];
 }	
 	
